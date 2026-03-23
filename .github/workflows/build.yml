@@ -8,12 +8,13 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      # Updated to v4
       - name: Checkout Code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       
-      # కాష్ (Cache) లేకుండా జావా సెటప్
+      # Updated to v4
       - name: Setup Java
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
           java-version: '17'
@@ -23,14 +24,13 @@ jobs:
         with:
           channel: 'stable'
 
-      # మీ ప్రాజెక్ట్ కి అవసరమైన android, web ఫైల్స్ ఇక్కడే క్రియేట్ అవుతాయి
+      # ప్రాజెక్ట్ కి అవసరమైన android, web ఫైల్స్ ఇక్కడే క్రియేట్ అవుతాయి
       - name: Create Platform Folders
         run: flutter create .
 
       - name: Install Dependencies
         run: flutter pub get
       
-      # Web, APK, AAB Builds
       - name: Build Web
         run: flutter build web --release
       
@@ -40,21 +40,23 @@ jobs:
       - name: Build AAB
         run: flutter build appbundle --release
 
-      # ఫైల్స్ అప్‌లోడ్ (డౌన్‌లోడ్ చేసుకోవడానికి)
+      # Updated to v4
       - name: Upload Web Build
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: WOG-Web
           path: build/web
 
+      # Updated to v4
       - name: Upload APK
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: WOG-APK
           path: build/app/outputs/flutter-apk/app-release.apk
 
+      # Updated to v4
       - name: Upload AAB
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: WOG-AAB
           path: build/app/outputs/bundle/release/app-release.aab
