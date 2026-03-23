@@ -13,7 +13,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       
-      # ముఖ్యం: ఇక్కడ 'cache: gradle' తీసివేయబడింది. 
+      # ఇక్కడ cache: 'gradle' ని పూర్తిగా తొలగించాను.
       - uses: actions/setup-java@v3
         with:
           distribution: 'zulu'
@@ -23,7 +23,7 @@ jobs:
         with:
           channel: 'stable'
 
-      # ముఖ్యం: GitHub లో లేని android, web ఫోల్డర్లను ఇది క్రియేట్ చేస్తుంది.
+      # Zapp/Web-only ప్రాజెక్ట్ కి android, web ఫోల్డర్స్ క్రియేట్ చేస్తుంది
       - name: Create Platform Folders
         run: flutter create .
 
