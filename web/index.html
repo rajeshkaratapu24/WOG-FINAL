@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base href="/">
+  <meta charset="UTF-8">
+  <title>WORLD OF GOD</title>
+  
+  <!-- Fast CSS Loader -->
+  <style>
+    body { background-color: #2196F3; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+    .loader { border: 6px solid #f3f3f3; border-top: 6px solid #ffffff; border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    .text { color: white; margin-top: 20px; font-family: Arial; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <div id="loader-div" style="text-align: center;">
+    <div class="loader"></div>
+    <div class="text">WOG లోడ్ అవుతోంది...</div>
+  </div>
+
+  <script src="flutter.js" defer></script>
+  <script>
+    window.addEventListener('load', function(ev) {
+      _flutter.loader.loadEntrypoint({
+        serviceWorker: { serviceWorkerVersion: null }
+      }).then(function(engineInitializer) {
+        return engineInitializer.initializeEngine();
+      }).then(function(appRunner) {
+        document.getElementById('loader-div').remove(); // ఫ్లట్టర్ లోడ్ అయ్యాక స్పిన్నర్ తీసేస్తుంది
+        return appRunner.runApp();
+      });
+    });
+  </script>
+</body>
+</html>
+
+
