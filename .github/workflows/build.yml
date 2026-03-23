@@ -4,7 +4,7 @@ on:
   push:
     branches: [ "main" ]
 
-# GitHub Pages కి పర్మిషన్స్
+# GitHub Pages డిప్లాయ్‌మెంట్ కోసం పర్మిషన్స్
 permissions:
   contents: write
 
@@ -14,33 +14,51 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       
+      # Java సెటప్
       - uses: actions/setup-java@v3
         with:
           distribution: 'zulu'
           java-version: '17'
       
+      # ఫ్లట్టర్ సెటప్
       - uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
 
-      - run: flutter pub get
-      
-      # Build Commands
-      - run: flutter build web --release --base-href "/${{ github.event.repository.name }}/"
-      - run: flutter build apk --release
-      - run: flutter build appbundle --release
+      # ఇక్కడే ట్రిక్ ఉంది: మిస్సయిన android, web ఫోల్డర్లని ఇది క్రియేట్ చేస్తుంది
+      - name: Create Platform Folders
+        run: flutter create .
 
-      # 1. Upload Artifacts (Downloadable APK/AAB)
-      - uses: actions/upload-artifact@v3
+      - name: Install Dependencies
+        run: flutter pub get
+      
+      # Build Web
+      - name: Build Web
+        run: flutter build web --release --base-href "/${{ github.event.repository.name }}/"
+      
+      # Build APK
+      - name: Build APK
+        run: flutter build apk --release
+      
+      # Build AAB
+      - name: Build App Bundle
+        run: flutter build appbundle --release
+
+      # APK ఫైల్ అప్‌లోడ్ (డౌన్‌లోడ్ చేసుకోవడానికి)
+      - name: Upload APK
+        uses: actions/upload-artifact@v3
         with:
           name: WOG-APK
           path: build/app/outputs/flutter-apk/app-release.apk
-      - uses: actions/upload-artifact@v3
+          
+      # AAB ఫైల్ అప్‌లోడ్ (Play Store కోసం)
+      - name: Upload AAB
+        uses: actions/upload-artifact@v3
         with:
           name: WOG-AAB
           path: build/app/outputs/bundle/release/app-release.aab
 
-      # 2. Deploy to GitHub Pages (For Live Preview)
+      # Live Preview కోసం GitHub Pages కి పబ్లిష్ చేయడం
       - name: Deploy Web to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
