@@ -1,5 +1,5 @@
 name: wog_app
-description: WOG App with side menu and bottom navigation.
+description: WORLD OF GOD Gospel App
 publish_to: 'none'
 version: 1.0.0+1
 
@@ -9,7 +9,16 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  cupertino_icons: ^1.0.2
+  # For Future Audio/Web usage
+  # audioplayers: ^5.2.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^2.0.0
 
 flutter:
   uses-material-design: true
+  # Assets యాడ్ చేసినప్పుడు ఇక్కడ అన్‌కామెంట్ చేయాలి
+  # assets:
+  #   - assets/images/
