@@ -1,14 +1,19 @@
-name: WOG Flutter Build
+name: WOG Flutter Build & Preview
 
 on:
   push:
     branches: [ "main" ]
+
+# GitHub Pages కి పర్మిషన్స్
+permissions:
+  contents: write
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      
       - uses: actions/setup-java@v3
         with:
           distribution: 'zulu'
@@ -20,16 +25,12 @@ jobs:
 
       - run: flutter pub get
       
-      # Build Commands (Web, APK, AAB)
-      - run: flutter build web --release
+      # Build Commands
+      - run: flutter build web --release --base-href "/${{ github.event.repository.name }}/"
       - run: flutter build apk --release
       - run: flutter build appbundle --release
 
-      # Upload Artifacts (Downloadable files)
-      - uses: actions/upload-artifact@v3
-        with:
-          name: WOG-Web
-          path: build/web
+      # 1. Upload Artifacts (Downloadable APK/AAB)
       - uses: actions/upload-artifact@v3
         with:
           name: WOG-APK
@@ -38,3 +39,10 @@ jobs:
         with:
           name: WOG-AAB
           path: build/app/outputs/bundle/release/app-release.aab
+
+      # 2. Deploy to GitHub Pages (For Live Preview)
+      - name: Deploy Web to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./build/web
