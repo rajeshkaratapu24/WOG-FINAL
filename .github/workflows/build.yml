@@ -1,37 +1,38 @@
-name: WOG Flutter Build & Preview
+name: WOG Flutter Build
 
 on:
   push:
     branches: [ "main" ]
 
-permissions:
-  contents: write
-
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout Code
+        uses: actions/checkout@v3
       
-      # ఇక్కడ cache: 'gradle' ని పూర్తిగా తొలగించాను.
-      - uses: actions/setup-java@v3
+      # కాష్ (Cache) లేకుండా జావా సెటప్
+      - name: Setup Java
+        uses: actions/setup-java@v3
         with:
           distribution: 'zulu'
           java-version: '17'
       
-      - uses: subosito/flutter-action@v2
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
 
-      # Zapp/Web-only ప్రాజెక్ట్ కి android, web ఫోల్డర్స్ క్రియేట్ చేస్తుంది
+      # మీ ప్రాజెక్ట్ కి అవసరమైన android, web ఫైల్స్ ఇక్కడే క్రియేట్ అవుతాయి
       - name: Create Platform Folders
         run: flutter create .
 
       - name: Install Dependencies
         run: flutter pub get
       
+      # Web, APK, AAB Builds
       - name: Build Web
-        run: flutter build web --release --base-href "/${{ github.event.repository.name }}/"
+        run: flutter build web --release
       
       - name: Build APK
         run: flutter build apk --release
@@ -39,20 +40,21 @@ jobs:
       - name: Build AAB
         run: flutter build appbundle --release
 
+      # ఫైల్స్ అప్‌లోడ్ (డౌన్‌లోడ్ చేసుకోవడానికి)
+      - name: Upload Web Build
+        uses: actions/upload-artifact@v3
+        with:
+          name: WOG-Web
+          path: build/web
+
       - name: Upload APK
         uses: actions/upload-artifact@v3
         with:
           name: WOG-APK
           path: build/app/outputs/flutter-apk/app-release.apk
-          
+
       - name: Upload AAB
         uses: actions/upload-artifact@v3
         with:
           name: WOG-AAB
           path: build/app/outputs/bundle/release/app-release.aab
-
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./build/web
