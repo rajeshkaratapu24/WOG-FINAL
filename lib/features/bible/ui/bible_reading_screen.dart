@@ -26,8 +26,10 @@ class _BibleReadingScreenState extends State<BibleReadingScreen> {
   @override
   void initState() {
     super.initState();
-    // స్క్రీన్ ఓపెన్ అవ్వగానే XML డేటా లాగడం స్టార్ట్ అవుతుంది
-    _bibleLogic.loadChapter(widget.bookCode, widget.chapter);
+    // ఫ్లట్టర్ వెబ్ లో UI పూర్తిగా రెండర్ అయ్యాకే లాజిక్ ట్రిగ్గర్ అవ్వడానికి microtask వాడాను
+    Future.microtask(() {
+      _bibleLogic.loadChapter(widget.bookCode, widget.chapter);
+    });
   }
 
   @override
@@ -52,31 +54,58 @@ class _BibleReadingScreenState extends State<BibleReadingScreen> {
           style: const TextStyle(color: Color(0xFFD4AF37), fontFamily: 'serif', fontWeight: FontWeight.bold, fontSize: 20),
         ),
         centerTitle: true,
+        actions: [
+          // క్యాష్ ఇష్యూస్ ని బైపాస్ చేయడానికి మ్యాన్యువల్ రిఫ్రెష్ బటన్
+          IconButton(
+            icon: const Icon(Icons.refresh, color: Color(0xFFD4AF37)),
+            onPressed: () {
+              _bibleLogic.loadChapter(widget.bookCode, widget.chapter);
+            },
+          ),
+        ],
       ),
       body: Column(
         children: [
           const FeatureToolbar(), // 20+ ఫీచర్స్ గోల్డ్ టూల్ బార్
           Expanded(
-            // AnimatedBuilder: Web/WASM లో async డేటా రాగానే కచ్చితంగా UI ని అప్‌డేట్ చేస్తుంది
             child: AnimatedBuilder(
               animation: _bibleLogic,
               builder: (context, child) {
-                // 1. లోడింగ్ అవుతుంటే లోడర్ చూపిస్తుంది
+                // 1. లోడింగ్ స్టేట్
                 if (_bibleLogic.isLoading) {
-                  return const Center(child: CircularProgressIndicator(color: Color(0xFFD4AF37)));
+                  return const Center(
+                    child: CircularProgressIndicator(color: Color(0xFFD4AF37)),
+                  );
                 }
 
-                // 2. ఒకవేళ డేటా రాకపోతే ఎంప్టీ మెసేజ్
+                // 2. ఎంప్టీ లేదా ఎర్రర్ స్టేట్
                 if (_bibleLogic.currentVerses.isEmpty) {
-                  return const Center(
-                    child: Text(
-                      'వచనాలు దొరకలేదు. XML డేటా లేదా మ్యాపింగ్ చెక్ చేయండి.',
-                      style: TextStyle(color: Colors.white54, fontSize: 16),
+                  return Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(Icons.warning_amber_rounded, color: Colors.white54, size: 48),
+                          const SizedBox(height: 16),
+                          Text(
+                            'వచనాలు దొరకలేదు.\nబుక్: ${widget.bookCode}, అధ్యాయం: ${widget.chapter}',
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(color: Colors.white54, fontSize: 16),
+                          ),
+                          const SizedBox(height: 16),
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF262626)),
+                            onPressed: () => _bibleLogic.loadChapter(widget.bookCode, widget.chapter),
+                            child: const Text('మళ్లీ ప్రయత్నించండి', style: TextStyle(color: Color(0xFFD4AF37))),
+                          )
+                        ],
+                      ),
                     ),
                   );
                 }
 
-                // 3. డేటా సక్సెస్ ఫుల్ గా వస్తే లిస్ట్ చూపిస్తుంది
+                // 3. సక్సెస్ స్టేట్ (వచనాలు లోడ్ అయ్యాయి)
                 return ListView.builder(
                   padding: const EdgeInsets.all(20.0),
                   physics: const BouncingScrollPhysics(),
@@ -85,7 +114,7 @@ class _BibleReadingScreenState extends State<BibleReadingScreen> {
                     final verseData = _bibleLogic.currentVerses[index];
                     int verseNum = int.tryParse(verseData['vnumber'] ?? '0') ?? index + 1;
                     
-                    // మీరు సెలెక్ట్ చేసిన వచనం గోల్డ్ కలర్ లో హైలైట్ అవుతుంది
+                    // యూజర్ సెలెక్ట్ చేసిన వచనం హైలైట్
                     bool isHighlighted = verseNum == widget.initialVerse;
 
                     return Container(
@@ -109,7 +138,7 @@ class _BibleReadingScreenState extends State<BibleReadingScreen> {
                           const SizedBox(width: 12),
                           Expanded(
                             child: Text(
-                              verseData['text'] ?? '', // అసలైన XML వచనం
+                              verseData['text'] ?? '', 
                               style: const TextStyle(
                                 color: Colors.white, 
                                 fontSize: 18, 
