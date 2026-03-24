@@ -5,7 +5,6 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Scaffold background color matching the dark theme
     return Scaffold(
       backgroundColor: const Color(0xFF1E1E1E),
       appBar: _buildAppBar(context),
@@ -21,7 +20,7 @@ class HomeScreen extends StatelessWidget {
               _buildNotificationsCard(),
               const SizedBox(height: 16),
               _buildLiveCard(),
-              const SizedBox(height: 24), // Extra padding at bottom
+              const SizedBox(height: 24),
             ],
           ),
         ),
@@ -30,14 +29,14 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  // 1. PREMIUM APP BAR
   PreferredSizeWidget _buildAppBar(BuildContext context) {
     return AppBar(
       backgroundColor: Colors.transparent,
       elevation: 0,
       leading: IconButton(
         icon: const Icon(Icons.menu, color: Colors.white, size: 32),
-        onTap: () => Scaffold.of(context).openDrawer(),
+        // ఇక్కడ onTap బదులు onPressed వాడాలి (ఇదే ఎర్రర్ కి కారణం)
+        onPressed: () => Scaffold.of(context).openDrawer(),
       ),
       actions: const [
         Padding(
@@ -47,7 +46,7 @@ class HomeScreen extends StatelessWidget {
             style: TextStyle(
               color: Colors.white,
               fontSize: 24,
-              fontFamily: 'serif', // Gives that elegant international look
+              fontFamily: 'serif',
               letterSpacing: 2.0,
             ),
           ),
@@ -56,7 +55,6 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  // 2. DAILY VERSE CARD (Deep Blue Gradient)
   Widget _buildDailyVerseCard() {
     return Container(
       width: double.infinity,
@@ -64,7 +62,7 @@ class HomeScreen extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
         gradient: const LinearGradient(
-          colors: [Color(0xFF0F172A), Color(0xFF1E1B4B)], // Midnight blue to deep indigo
+          colors: [Color(0xFF0F172A), Color(0xFF1E1B4B)], 
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -105,7 +103,6 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  // 3. NOTIFICATIONS CARD (Deep Red Gradient)
   Widget _buildNotificationsCard() {
     return Container(
       width: double.infinity,
@@ -113,7 +110,7 @@ class HomeScreen extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
         gradient: const LinearGradient(
-          colors: [Color(0xFF450A0A), Color(0xFF1A0505)], // Dark maroon to almost black
+          colors: [Color(0xFF450A0A), Color(0xFF1A0505)], 
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -148,7 +145,6 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  // 4. LIVE CARD (Dark Grey with Red Badge)
   Widget _buildLiveCard() {
     return Container(
       width: double.infinity,
@@ -201,12 +197,11 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  // 5. CUSTOM BOTTOM NAVIGATION BAR
   Widget _buildBottomNav() {
     return Container(
       height: 70,
       decoration: const BoxDecoration(
-        color: Color(0xFF0A0A0A), // Very dark bottom bar
+        color: Color(0xFF0A0A0A), 
         border: Border(top: BorderSide(color: Colors.white12, width: 1)),
       ),
       child: Row(
@@ -214,7 +209,7 @@ class HomeScreen extends StatelessWidget {
         children: [
           IconButton(icon: const Icon(Icons.library_books_outlined, color: Colors.grey, size: 28), onPressed: () {}),
           IconButton(icon: const Icon(Icons.menu_book_outlined, color: Colors.grey, size: 28), onPressed: () {}),
-          IconButton(icon: const Icon(Icons.home, color: Colors.white, size: 32), onPressed: () {}), // Active icon
+          IconButton(icon: const Icon(Icons.home, color: Colors.white, size: 32), onPressed: () {}),
           IconButton(icon: const Icon(Icons.album_outlined, color: Colors.grey, size: 28), onPressed: () {}),
           IconButton(icon: const Icon(Icons.manage_accounts_outlined, color: Colors.grey, size: 28), onPressed: () {}),
         ],
@@ -222,7 +217,6 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  // --- EXISTING SIDE MENU LOGIC RETAINED ---
   Widget _buildSideMenu() {
     return Drawer(
       backgroundColor: const Color(0xFF1E1E1E),
