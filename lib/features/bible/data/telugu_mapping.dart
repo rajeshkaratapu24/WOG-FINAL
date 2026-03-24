@@ -9,7 +9,6 @@ class TeluguMapping {
     'LUK': 'లూకా సువార్త',
     'JHN': 'యోహాను సువార్త',
     'REV': 'ప్రకటన గ్రంథము',
-    // మిగతా పుస్తకాలు ఇక్కడ యాడ్ చేస్తాం
   };
 
   static String getTeluguName(String bookCode) {
