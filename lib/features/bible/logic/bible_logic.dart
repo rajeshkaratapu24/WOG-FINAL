@@ -6,10 +6,8 @@ class BibleLogic extends ChangeNotifier {
   List<Map<String, String>> currentVerses = [];
   bool isLoading = false;
   
-  // XML డాక్యుమెంట్ ని ప్రతిసారీ పార్స్ చేయకుండా మెమరీలో దాచుకోవడానికి (Performance కోసం)
   static XmlDocument? _parsedBible;
 
-  // XML లో ఉన్న ఇంగ్లీష్ పేర్లకి మన బుక్ కోడ్స్ కి మ్యాపింగ్
   static const Map<String, String> xmlBookNames = {
     'GEN': 'Genesis', 'EXO': 'Exodus', 'LEV': 'Leviticus', 'NUM': 'Numbers',
     'DEU': 'Deuteronomy', 'JOS': 'Joshua', 'JDG': 'Judges', 'RUT': 'Ruth',
@@ -35,29 +33,47 @@ class BibleLogic extends ChangeNotifier {
     notifyListeners();
 
     try {
-      // 1. XML ఫైల్ ఒకేసారి లోడ్ చేసి క్యాష్ చేయడం (బ్రౌజర్ స్టక్ అవ్వకుండా)
       if (_parsedBible == null) {
-        final xmlString = await rootBundle.loadString('assets/telugu_bible.xml');
+        // 1. XML స్ట్రింగ్ లోడ్ చేయడం
+        String xmlString = await rootBundle.loadString('assets/telugu_bible.xml');
+        
+        // --- AUTO-FIX LOGIC ---
+        // ఇన్‌విజిబుల్ క్యారెక్టర్స్ (Non-breaking spaces) తొలగించడం
+        xmlString = xmlString.replaceAll('\u00A0', ' ').trim();
+        
+        // ఒకవేళ XML ఫార్మాట్ తప్పుగా ఉండి <XMLBIBLE> మిస్ అయితే ఫోర్స్ గా యాడ్ చేయడం
+        if (!xmlString.contains('<XMLBIBLE>')) {
+           int firstBookIndex = xmlString.indexOf('<BIBLEBOOK');
+           if (firstBookIndex != -1) {
+             xmlString = '<?xml version="1.0"?>\n<XMLBIBLE>\n${xmlString.substring(firstBookIndex)}';
+             if (!xmlString.endsWith('</XMLBIBLE>')) {
+               xmlString += '\n</XMLBIBLE>';
+             }
+           }
+        }
+        // ----------------------
+
         _parsedBible = XmlDocument.parse(xmlString);
       }
 
-      // 2. మ్యాపింగ్ నుండి XML లో ఉన్న అసలు పేరు లాగడం
       String actualXmlName = xmlBookNames[bookCode] ?? bookCode;
-
-      // 3. బుక్ మరియు చాప్టర్ ని వెతకడం
       final books = _parsedBible!.findAllElements('BIBLEBOOK');
+      
       final targetBook = books.firstWhere(
-        (b) => b.getAttribute('bname')?.toLowerCase() == actualXmlName.toLowerCase(),
+        (b) {
+          final xmlBName = (b.getAttribute('bname') ?? '').toLowerCase().trim();
+          final targetName = actualXmlName.toLowerCase().trim();
+          return xmlBName == targetName || xmlBName.contains(targetName);
+        },
         orElse: () => throw Exception('Book "$actualXmlName" not found in XML'),
       );
 
       final chapters = targetBook.findAllElements('CHAPTER');
       final targetChapter = chapters.firstWhere(
-        (c) => c.getAttribute('cnumber') == chapterNum.toString(),
+        (c) => c.getAttribute('cnumber')?.trim() == chapterNum.toString(),
         orElse: () => throw Exception('Chapter "$chapterNum" not found'),
       );
 
-      // 4. వర్సెస్ లిస్ట్ అప్‌డేట్
       final verses = targetChapter.findAllElements('VERS');
       currentVerses = verses.map((v) {
         return {
@@ -68,11 +84,10 @@ class BibleLogic extends ChangeNotifier {
 
     } catch (e) {
       debugPrint('XML Parsing Error: $e');
-      // ఎర్రర్ వస్తే డెమో రాకుండా డైరెక్ట్ గా ఎర్రర్ స్క్రీన్ పైకి వచ్చేలా అప్‌డేట్ చేశాను
       currentVerses = [
         {
           'vnumber': '!',
-          'text': 'XML ఎర్రర్: $e\nదయచేసి XML ఫైల్ ఫార్మాట్ కరెక్ట్ గా ఉందో లేదో చెక్ చేయండి.'
+          'text': 'XML ఎర్రర్: $e\n(మీ బ్రౌజర్ పాత ఫైల్ ని సేవ్ చేసుకుంది. దయచేసి బ్రౌజర్ క్యాష్ (Clear Cache) చేసి మళ్లీ ప్రయత్నించండి).'
         }
       ];
     }
