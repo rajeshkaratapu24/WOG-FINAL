@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'splash_screen.dart';
-import 'ui/home_screen.dart';
+import 'ui/home_screen.dart'; // పాత్ మార్చాము
 
 void main() {
   runApp(const WogApp());
