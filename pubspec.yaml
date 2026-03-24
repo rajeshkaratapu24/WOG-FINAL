@@ -9,8 +9,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  # For Future Audio/Web usage
-  # audioplayers: ^5.2.1
+  # XML ని రీడ్ చేయడానికి ఈ ప్యాకేజీ తప్పనిసరి
+  xml: ^6.3.0
 
 dev_dependencies:
   flutter_test:
@@ -19,6 +19,7 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
-  # Assets యాడ్ చేసినప్పుడు ఇక్కడ అన్‌కామెంట్ చేయాలి
-  # assets:
-  #   - assets/images/
+  
+  # మీ XML ఫైల్ పాత్ ని ఇక్కడ రిజిస్టర్ చేయాలి
+  assets:
+    - assets/telugu_bible.xml
