@@ -3,164 +3,250 @@ import 'package:flutter/material.dart';
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
-  // Premium Dark Color Palette
-  static const Color bgDark = Color(0xFF121212); // Deep Black/Gray
-  static const Color surfaceDark = Color(0xFF1E1E1E); // Dark Gray
-  static const Color accentRed = Color(0xFF990000); // Dark Red
-  static const Color textWhite = Color(0xFFE0E0E0); // Off-White
-  static const Color textGrey = Color(0xFF808080); // Dim Gray
-
   @override
   Widget build(BuildContext context) {
+    // Scaffold background color matching the dark theme
     return Scaffold(
-      backgroundColor: bgDark,
-      appBar: _buildAppBar(),
+      backgroundColor: const Color(0xFF1E1E1E),
+      appBar: _buildAppBar(context),
       drawer: _buildSideMenu(),
-      body: _buildNavigationGrid(context),
-    );
-  }
-
-  // 1. SLEEK APP BAR UI
-  PreferredSizeWidget _buildAppBar() {
-    return AppBar(
-      title: const Text(
-        'W O G',
-        style: TextStyle(
-          color: textWhite,
-          fontWeight: FontWeight.w300, // Slim font
-          letterSpacing: 6.0, // Sleek spacing
-          fontSize: 20,
+      body: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+          child: Column(
+            children: [
+              _buildDailyVerseCard(),
+              const SizedBox(height: 16),
+              _buildNotificationsCard(),
+              const SizedBox(height: 16),
+              _buildLiveCard(),
+              const SizedBox(height: 24), // Extra padding at bottom
+            ],
+          ),
         ),
       ),
-      centerTitle: true,
+      bottomNavigationBar: _buildBottomNav(),
+    );
+  }
+
+  // 1. PREMIUM APP BAR
+  PreferredSizeWidget _buildAppBar(BuildContext context) {
+    return AppBar(
+      backgroundColor: Colors.transparent,
       elevation: 0,
-      backgroundColor: bgDark,
-      iconTheme: const IconThemeData(color: textWhite),
-      bottom: PreferredSize(
-        preferredSize: const Size.fromHeight(1.0),
-        child: Container(color: surfaceDark, height: 1.0), // Thin bottom border
+      leading: IconButton(
+        icon: const Icon(Icons.menu, color: Colors.white, size: 32),
+        onTap: () => Scaffold.of(context).openDrawer(),
+      ),
+      actions: const [
+        Padding(
+          padding: EdgeInsets.only(right: 20.0),
+          child: Text(
+            'WOG',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 24,
+              fontFamily: 'serif', // Gives that elegant international look
+              letterSpacing: 2.0,
+            ),
+          ),
+        )
+      ],
+    );
+  }
+
+  // 2. DAILY VERSE CARD (Deep Blue Gradient)
+  Widget _buildDailyVerseCard() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        gradient: const LinearGradient(
+          colors: [Color(0xFF0F172A), Color(0xFF1E1B4B)], // Midnight blue to deep indigo
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        boxShadow: [
+          BoxShadow(color: Colors.black.withOpacity(0.5), blurRadius: 10, offset: const Offset(0, 5)),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: const [
+              Text(
+                'DAILY VERSE',
+                style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: 'serif', letterSpacing: 1.5),
+              ),
+              Icon(Icons.menu_book, color: Colors.white, size: 28),
+            ],
+          ),
+          const SizedBox(height: 30),
+          const Center(
+            child: Text(
+              'యెహోవా నా కాపరి',
+              style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.w500),
+            ),
+          ),
+          const SizedBox(height: 20),
+          const Align(
+            alignment: Alignment.centerRight,
+            child: Text(
+              '- కీర్తనలు 1:1',
+              style: TextStyle(color: Colors.white70, fontSize: 14),
+            ),
+          ),
+        ],
       ),
     );
   }
 
-  // 2. MINIMALIST SIDE MENU (DRAWER) UI
-  Widget _buildSideMenu() {
-    return Drawer(
-      backgroundColor: bgDark,
+  // 3. NOTIFICATIONS CARD (Deep Red Gradient)
+  Widget _buildNotificationsCard() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        gradient: const LinearGradient(
+          colors: [Color(0xFF450A0A), Color(0xFF1A0505)], // Dark maroon to almost black
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        boxShadow: [
+          BoxShadow(color: Colors.black.withOpacity(0.5), blurRadius: 10, offset: const Offset(0, 5)),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: const [
+              Text(
+                'NOTIFICATIONS',
+                style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: 'serif', letterSpacing: 1.5),
+              ),
+              Icon(Icons.notifications_none, color: Colors.white, size: 28),
+            ],
+          ),
+          const SizedBox(height: 30),
+          const Center(
+            child: Text(
+              'ఈరోజు లైవ్ లో ప్రార్థనలు జరుగుతాయి.',
+              textAlign: TextAlign.center,
+              style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w400),
+            ),
+          ),
+          const SizedBox(height: 10),
+        ],
+      ),
+    );
+  }
+
+  // 4. LIVE CARD (Dark Grey with Red Badge)
+  Widget _buildLiveCard() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        gradient: const LinearGradient(
+          colors: [Color(0xFF262626), Color(0xFF171717)],
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+        ),
+      ),
       child: Column(
         children: [
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.only(top: 80, bottom: 40),
-            decoration: const BoxDecoration(
-              border: Border(bottom: BorderSide(color: surfaceDark, width: 1)),
-            ),
-            child: const Column(
-              children: [
-                Icon(Icons.language, color: accentRed, size: 40),
-                SizedBox(height: 16),
-                Text(
-                  'WORLD OF GOD',
-                  style: TextStyle(
-                    color: textWhite,
-                    fontSize: 14,
-                    letterSpacing: 3.0,
-                    fontWeight: FontWeight.w300,
+          Align(
+            alignment: Alignment.topLeft,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              decoration: BoxDecoration(
+                color: Colors.black,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    width: 10,
+                    height: 10,
+                    decoration: const BoxDecoration(color: Colors.red, shape: BoxShape.circle),
                   ),
-                ),
-              ],
-            ),
-          ),
-          Expanded(
-            child: ListView(
-              padding: const EdgeInsets.symmetric(vertical: 20),
-              children: [
-                _menuItem(Icons.login_outlined, 'లాగిన్'),
-                _menuItem(Icons.mail_outline, 'కాంటాక్ట్'),
-                _menuItem(Icons.library_books_outlined, 'పుస్తకాలు'),
-                _menuItem(Icons.help_outline, 'Q & A'),
-              ],
-            ),
-          ),
-          const Padding(
-            padding: EdgeInsets.all(24.0),
-            child: Text(
-              'v 1.0.0',
-              style: TextStyle(color: textGrey, fontSize: 12, letterSpacing: 2.0),
-            ),
-          )
-        ],
-      ),
-    );
-  }
-
-  // Side Menu Item Helper
-  Widget _menuItem(IconData icon, String title) {
-    return ListTile(
-      contentPadding: const EdgeInsets.symmetric(horizontal: 32, vertical: 8),
-      leading: Icon(icon, color: textGrey, size: 22),
-      title: Text(
-        title,
-        style: const TextStyle(
-          color: textWhite,
-          fontSize: 14,
-          fontWeight: FontWeight.w400,
-          letterSpacing: 1.0,
-        ),
-      ),
-      onTap: () {},
-    );
-  }
-
-  // 3. SLEEK NAVIGATION GRID UI
-  Widget _buildNavigationGrid(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(24.0),
-      child: GridView.count(
-        crossAxisCount: 2,
-        crossAxisSpacing: 16,
-        mainAxisSpacing: 16,
-        childAspectRatio: 1.0,
-        children: [
-          _navCard('బైబిల్', Icons.menu_book_outlined, () {}),
-          _navCard('మ్యూజిక్', Icons.music_note_outlined, () {}),
-          _navCard('బుక్స్', Icons.book_outlined, () {}),
-          _navCard('PROJECT H', Icons.work_outline, () {}),
-        ],
-      ),
-    );
-  }
-
-  // Sleek Outlined Card Helper
-  Widget _navCard(String title, IconData icon, VoidCallback onTap) {
-    return InkWell(
-      onTap: onTap,
-      splashColor: accentRed.withOpacity(0.1),
-      highlightColor: Colors.transparent,
-      borderRadius: BorderRadius.circular(2), // Sharp corners
-      child: Container(
-        decoration: BoxDecoration(
-          color: bgDark,
-          border: Border.all(color: surfaceDark, width: 1.5),
-          borderRadius: BorderRadius.circular(2), // Sharp minimalist look
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon, size: 32, color: accentRed), // Dark Red Accent
-            const SizedBox(height: 16),
-            Text(
-              title,
-              style: const TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w400,
-                color: textWhite,
-                letterSpacing: 2.0, // Premium spacing
+                  const SizedBox(width: 8),
+                  const Text('LIVE', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, letterSpacing: 1.2)),
+                ],
               ),
             ),
-          ],
-        ),
+          ),
+          const SizedBox(height: 20),
+          const Text(
+            'Evening Fellowship & Prayer',
+            style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w500),
+          ),
+          const SizedBox(height: 20),
+          const Text(
+            'Join our daily live session with the community.\nConnect directly via Jitsi.',
+            textAlign: TextAlign.center,
+            style: TextStyle(color: Colors.white70, fontSize: 14, height: 1.5),
+          ),
+        ],
       ),
+    );
+  }
+
+  // 5. CUSTOM BOTTOM NAVIGATION BAR
+  Widget _buildBottomNav() {
+    return Container(
+      height: 70,
+      decoration: const BoxDecoration(
+        color: Color(0xFF0A0A0A), // Very dark bottom bar
+        border: Border(top: BorderSide(color: Colors.white12, width: 1)),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          IconButton(icon: const Icon(Icons.library_books_outlined, color: Colors.grey, size: 28), onPressed: () {}),
+          IconButton(icon: const Icon(Icons.menu_book_outlined, color: Colors.grey, size: 28), onPressed: () {}),
+          IconButton(icon: const Icon(Icons.home, color: Colors.white, size: 32), onPressed: () {}), // Active icon
+          IconButton(icon: const Icon(Icons.album_outlined, color: Colors.grey, size: 28), onPressed: () {}),
+          IconButton(icon: const Icon(Icons.manage_accounts_outlined, color: Colors.grey, size: 28), onPressed: () {}),
+        ],
+      ),
+    );
+  }
+
+  // --- EXISTING SIDE MENU LOGIC RETAINED ---
+  Widget _buildSideMenu() {
+    return Drawer(
+      backgroundColor: const Color(0xFF1E1E1E),
+      child: ListView(
+        padding: EdgeInsets.zero,
+        children: [
+          const DrawerHeader(
+            decoration: BoxDecoration(color: Colors.black),
+            child: Text('WOG Menu', style: TextStyle(color: Colors.white, fontSize: 24, fontFamily: 'serif')),
+          ),
+          _menuItem(Icons.login, 'లాగిన్ (Login)'),
+          _menuItem(Icons.contact_mail, 'కాంటాక్ట్ (Contact)'),
+          _menuItem(Icons.library_books, 'పుస్తకాలు (Books)'),
+          _menuItem(Icons.question_answer, 'Q&A'),
+        ],
+      ),
+    );
+  }
+
+  Widget _menuItem(IconData icon, String title) {
+    return ListTile(
+      leading: Icon(icon, color: Colors.white70),
+      title: Text(title, style: const TextStyle(color: Colors.white)),
+      onTap: () {},
     );
   }
 }
