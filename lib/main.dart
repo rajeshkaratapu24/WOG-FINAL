@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'splash_screen.dart';
+import 'ui/home_screen.dart';
 
 void main() {
   runApp(const WogApp());
