@@ -1,23 +1,41 @@
 import 'package:flutter/material.dart';
-import 'ui/home_screen.dart'; // పాత్ మార్చాము
+import 'dart:async';
+import 'home_screen.dart'; // రెండూ 'ui' ఫోల్డర్ లోనే ఉన్నాయి కాబట్టి డైరెక్ట్ ఇంపోర్ట్
 
-void main() {
-  runApp(const WogApp());
+class SplashScreen extends StatefulWidget {
+  const SplashScreen({super.key});
+
+  @override
+  State<SplashScreen> createState() => _SplashScreenState();
 }
 
-class WogApp extends StatelessWidget {
-  const WogApp({super.key});
+class _SplashScreenState extends State<SplashScreen> {
+  @override
+  void initState() {
+    super.initState();
+    // 2 సెకన్ల తర్వాత Home Screen కి వెళ్తుంది
+    Timer(const Duration(seconds: 2), () {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => const HomeScreen()),
+      );
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'WORLD OF GOD',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        useMaterial3: true,
+    return const Scaffold(
+      backgroundColor: Colors.blueAccent,
+      body: Center(
+        child: Text(
+          'WORLD OF GOD\n(WOG)',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: 32, 
+            fontWeight: FontWeight.bold, 
+            color: Colors.white
+          ),
+        ),
       ),
-      home: const SplashScreen(),
     );
   }
 }
