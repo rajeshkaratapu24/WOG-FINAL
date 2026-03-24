@@ -5,8 +5,11 @@ import 'package:xml/xml.dart';
 class BibleLogic extends ChangeNotifier {
   List<Map<String, String>> currentVerses = [];
   bool isLoading = false;
+  
+  // XML డాక్యుమెంట్ ని ప్రతిసారీ పార్స్ చేయకుండా మెమరీలో దాచుకోవడానికి (Performance కోసం)
+  static XmlDocument? _parsedBible;
 
-  // XML లో ఉన్న ఇంగ్లీష్ పేర్లకి మన బుక్ కోడ్స్ కి మ్యాపింగ్ (Static variables rule)
+  // XML లో ఉన్న ఇంగ్లీష్ పేర్లకి మన బుక్ కోడ్స్ కి మ్యాపింగ్
   static const Map<String, String> xmlBookNames = {
     'GEN': 'Genesis', 'EXO': 'Exodus', 'LEV': 'Leviticus', 'NUM': 'Numbers',
     'DEU': 'Deuteronomy', 'JOS': 'Joshua', 'JDG': 'Judges', 'RUT': 'Ruth',
@@ -32,24 +35,26 @@ class BibleLogic extends ChangeNotifier {
     notifyListeners();
 
     try {
-      // 1. XML ఫైల్ లోడ్
-      final xmlString = await rootBundle.loadString('assets/telugu_bible.xml');
-      final document = XmlDocument.parse(xmlString);
+      // 1. XML ఫైల్ ఒకేసారి లోడ్ చేసి క్యాష్ చేయడం (బ్రౌజర్ స్టక్ అవ్వకుండా)
+      if (_parsedBible == null) {
+        final xmlString = await rootBundle.loadString('assets/telugu_bible.xml');
+        _parsedBible = XmlDocument.parse(xmlString);
+      }
 
       // 2. మ్యాపింగ్ నుండి XML లో ఉన్న అసలు పేరు లాగడం
       String actualXmlName = xmlBookNames[bookCode] ?? bookCode;
 
       // 3. బుక్ మరియు చాప్టర్ ని వెతకడం
-      final books = document.findAllElements('BIBLEBOOK');
+      final books = _parsedBible!.findAllElements('BIBLEBOOK');
       final targetBook = books.firstWhere(
         (b) => b.getAttribute('bname')?.toLowerCase() == actualXmlName.toLowerCase(),
-        orElse: () => throw Exception('Book not found in XML: $actualXmlName'),
+        orElse: () => throw Exception('Book "$actualXmlName" not found in XML'),
       );
 
       final chapters = targetBook.findAllElements('CHAPTER');
       final targetChapter = chapters.firstWhere(
         (c) => c.getAttribute('cnumber') == chapterNum.toString(),
-        orElse: () => throw Exception('Chapter not found'),
+        orElse: () => throw Exception('Chapter "$chapterNum" not found'),
       );
 
       // 4. వర్సెస్ లిస్ట్ అప్‌డేట్
@@ -63,7 +68,13 @@ class BibleLogic extends ChangeNotifier {
 
     } catch (e) {
       debugPrint('XML Parsing Error: $e');
-      currentVerses = []; // ఎర్రర్ వస్తే లిస్ట్ ఖాళీ అవుతుంది
+      // ఎర్రర్ వస్తే డెమో రాకుండా డైరెక్ట్ గా ఎర్రర్ స్క్రీన్ పైకి వచ్చేలా అప్‌డేట్ చేశాను
+      currentVerses = [
+        {
+          'vnumber': '!',
+          'text': 'XML ఎర్రర్: $e\nదయచేసి XML ఫైల్ ఫార్మాట్ కరెక్ట్ గా ఉందో లేదో చెక్ చేయండి.'
+        }
+      ];
     }
 
     isLoading = false;
