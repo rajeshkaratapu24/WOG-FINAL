@@ -26,7 +26,6 @@ class _BibleReadingScreenState extends State<BibleReadingScreen> {
   @override
   void initState() {
     super.initState();
-    // ఫ్లట్టర్ వెబ్ లో UI పూర్తిగా రెండర్ అయ్యాకే లాజిక్ ట్రిగ్గర్ అవ్వడానికి microtask వాడాను
     Future.microtask(() {
       _bibleLogic.loadChapter(widget.bookCode, widget.chapter);
     });
@@ -55,10 +54,10 @@ class _BibleReadingScreenState extends State<BibleReadingScreen> {
         ),
         centerTitle: true,
         actions: [
-          // క్యాష్ ఇష్యూస్ ని బైపాస్ చేయడానికి మ్యాన్యువల్ రిఫ్రెష్ బటన్
           IconButton(
             icon: const Icon(Icons.refresh, color: Color(0xFFD4AF37)),
             onPressed: () {
+              // ఎర్రర్ వస్తే ఫోర్స్ గా రీలోడ్ చేయడానికి
               _bibleLogic.loadChapter(widget.bookCode, widget.chapter);
             },
           ),
@@ -66,19 +65,17 @@ class _BibleReadingScreenState extends State<BibleReadingScreen> {
       ),
       body: Column(
         children: [
-          const FeatureToolbar(), // 20+ ఫీచర్స్ గోల్డ్ టూల్ బార్
+          const FeatureToolbar(),
           Expanded(
             child: AnimatedBuilder(
               animation: _bibleLogic,
               builder: (context, child) {
-                // 1. లోడింగ్ స్టేట్
                 if (_bibleLogic.isLoading) {
                   return const Center(
                     child: CircularProgressIndicator(color: Color(0xFFD4AF37)),
                   );
                 }
 
-                // 2. ఎంప్టీ లేదా ఎర్రర్ స్టేట్
                 if (_bibleLogic.currentVerses.isEmpty) {
                   return Center(
                     child: Padding(
@@ -105,7 +102,6 @@ class _BibleReadingScreenState extends State<BibleReadingScreen> {
                   );
                 }
 
-                // 3. సక్సెస్ స్టేట్ (వచనాలు లోడ్ అయ్యాయి)
                 return ListView.builder(
                   padding: const EdgeInsets.all(20.0),
                   physics: const BouncingScrollPhysics(),
@@ -114,7 +110,6 @@ class _BibleReadingScreenState extends State<BibleReadingScreen> {
                     final verseData = _bibleLogic.currentVerses[index];
                     int verseNum = int.tryParse(verseData['vnumber'] ?? '0') ?? index + 1;
                     
-                    // యూజర్ సెలెక్ట్ చేసిన వచనం హైలైట్
                     bool isHighlighted = verseNum == widget.initialVerse;
 
                     return Container(
