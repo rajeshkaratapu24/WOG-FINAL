@@ -8,25 +8,27 @@ class BibleScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF1E1E1E),
+      backgroundColor: const Color(0xFF121212), // Premium Deep Dark
       appBar: _buildBibleAppBar(context),
       body: Column(
         children: [
-          const FeatureToolbar(), // సపరేట్ చేసిన విడ్జెట్ ని ఇక్కడ కాల్ చేశాం
-          const Divider(color: Colors.white12, height: 1),
+          const FeatureToolbar(),
           Expanded(
             child: SingleChildScrollView(
               physics: const BouncingScrollPhysics(),
               child: Padding(
-                padding: const EdgeInsets.all(16.0),
+                padding: const EdgeInsets.all(20.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _buildSectionHeader('Old Testament (పాత నిబంధన)'),
+                    _buildSectionHeader('OLD TESTAMENT', 'పాత నిబంధన'),
+                    const SizedBox(height: 16),
                     _buildBooksGrid(['GEN', 'EXO', 'LEV']),
-                    const SizedBox(height: 24),
-                    _buildSectionHeader('New Testament (క్రొత్త నిబంధన)'),
+                    const SizedBox(height: 32),
+                    _buildSectionHeader('NEW TESTAMENT', 'క్రొత్త నిబంధన'),
+                    const SizedBox(height: 16),
                     _buildBooksGrid(['MAT', 'MRK', 'LUK', 'JHN', 'REV']),
+                    const SizedBox(height: 40),
                   ],
                 ),
               ),
@@ -39,37 +41,38 @@ class BibleScreen extends StatelessWidget {
 
   PreferredSizeWidget _buildBibleAppBar(BuildContext context) {
     return AppBar(
-      backgroundColor: const Color(0xFF1E1E1E),
+      backgroundColor: const Color(0xFF121212),
       elevation: 0,
       leading: IconButton(
-        icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+        icon: const Icon(Icons.arrow_back_ios, color: Colors.white, size: 20),
         onPressed: () => Navigator.pop(context),
       ),
       title: const Text(
-        'BIBLE',
-        style: TextStyle(color: Colors.white, fontFamily: 'serif', letterSpacing: 2.0),
+        'HOLY BIBLE',
+        style: TextStyle(
+          color: Color(0xFFD4AF37), // Gold Title
+          fontFamily: 'serif', 
+          letterSpacing: 2.5, 
+          fontWeight: FontWeight.bold, 
+          fontSize: 22
+        ),
       ),
       centerTitle: true,
       actions: [
-        IconButton(icon: const Icon(Icons.search, color: Colors.white), onPressed: () {}),
-        IconButton(icon: const Icon(Icons.history, color: Colors.white), onPressed: () {}),
+        IconButton(icon: const Icon(Icons.search, color: Colors.white70), onPressed: () {}),
+        IconButton(icon: const Icon(Icons.history, color: Colors.white70), onPressed: () {}),
       ],
     );
   }
 
-  Widget _buildSectionHeader(String title) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 16.0),
-      child: Text(
-        title,
-        style: const TextStyle(
-          color: Colors.white,
-          fontSize: 18,
-          fontFamily: 'serif',
-          fontWeight: FontWeight.bold,
-          letterSpacing: 1.2,
-        ),
-      ),
+  Widget _buildSectionHeader(String engTitle, String teluguTitle) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(engTitle, style: const TextStyle(color: Colors.white54, fontSize: 12, letterSpacing: 2.0, fontWeight: FontWeight.w600)),
+        const SizedBox(height: 4),
+        Text(teluguTitle, style: const TextStyle(color: Colors.white, fontSize: 20, fontFamily: 'serif', fontWeight: FontWeight.w500)),
+      ],
     );
   }
 
@@ -79,9 +82,9 @@ class BibleScreen extends StatelessWidget {
       physics: const NeverScrollableScrollPhysics(),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 3,
-        crossAxisSpacing: 12,
-        mainAxisSpacing: 12,
-        childAspectRatio: 2.5,
+        crossAxisSpacing: 16,
+        mainAxisSpacing: 16,
+        childAspectRatio: 2.2,
       ),
       itemCount: bookCodes.length,
       itemBuilder: (context, index) {
@@ -89,21 +92,26 @@ class BibleScreen extends StatelessWidget {
         String teluguName = TeluguMapping.getTeluguName(code);
         
         return InkWell(
-          onTap: () {
-            // భవిష్యత్తులో Chapter selection కి నావిగేట్ అవుతుంది
-          },
-          borderRadius: BorderRadius.circular(8),
+          onTap: () {},
+          borderRadius: BorderRadius.circular(12),
           child: Container(
             decoration: BoxDecoration(
-              color: const Color(0xFF262626),
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: Colors.white12),
+              gradient: const LinearGradient(
+                colors: [Color(0xFF2A2A2A), Color(0xFF1E1E1E)], 
+                begin: Alignment.topLeft, 
+                end: Alignment.bottomRight
+              ),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Colors.white.withOpacity(0.05)),
+              boxShadow: [
+                BoxShadow(color: Colors.black.withOpacity(0.3), blurRadius: 8, offset: const Offset(0, 4))
+              ],
             ),
             alignment: Alignment.center,
             child: Text(
-              teluguName,
-              textAlign: TextAlign.center,
-              style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w500),
+              teluguName, 
+              textAlign: TextAlign.center, 
+              style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w500, letterSpacing: 0.5)
             ),
           ),
         );
