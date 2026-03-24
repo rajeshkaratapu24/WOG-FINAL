@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <base href="/">
+  <!-- ఇక్కడే మార్పు జరిగింది. ఫ్లట్టర్ కి కావాల్సిన ప్లేస్ హోల్డర్ ఇది. -->
+  <base href="$FLUTTER_BASE_HREF">
+
   <meta charset="UTF-8">
   <title>WORLD OF GOD</title>
   
@@ -27,7 +29,7 @@
       }).then(function(engineInitializer) {
         return engineInitializer.initializeEngine();
       }).then(function(appRunner) {
-        document.getElementById('loader-div').remove(); // ఫ్లట్టర్ లోడ్ అయ్యాక స్పిన్నర్ తీసేస్తుంది
+        document.getElementById('loader-div').remove();
         return appRunner.runApp();
       });
     });
