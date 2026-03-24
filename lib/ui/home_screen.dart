@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../features/bible/ui/bible_screen.dart'; // కొత్త ఫోల్డర్ పాత్
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -25,7 +26,7 @@ class HomeScreen extends StatelessWidget {
           ),
         ),
       ),
-      bottomNavigationBar: _buildBottomNav(),
+      bottomNavigationBar: _buildBottomNav(context),
     );
   }
 
@@ -35,7 +36,6 @@ class HomeScreen extends StatelessWidget {
       elevation: 0,
       leading: IconButton(
         icon: const Icon(Icons.menu, color: Colors.white, size: 32),
-        // ఇక్కడ onTap బదులు onPressed వాడాలి (ఇదే ఎర్రర్ కి కారణం)
         onPressed: () => Scaffold.of(context).openDrawer(),
       ),
       actions: const [
@@ -197,7 +197,7 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildBottomNav() {
+  Widget _buildBottomNav(BuildContext context) {
     return Container(
       height: 70,
       decoration: const BoxDecoration(
@@ -208,7 +208,15 @@ class HomeScreen extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           IconButton(icon: const Icon(Icons.library_books_outlined, color: Colors.grey, size: 28), onPressed: () {}),
-          IconButton(icon: const Icon(Icons.menu_book_outlined, color: Colors.grey, size: 28), onPressed: () {}),
+          IconButton(
+            icon: const Icon(Icons.menu_book_outlined, color: Colors.grey, size: 28), 
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const BibleScreen()),
+              );
+            },
+          ),
           IconButton(icon: const Icon(Icons.home, color: Colors.white, size: 32), onPressed: () {}),
           IconButton(icon: const Icon(Icons.album_outlined, color: Colors.grey, size: 28), onPressed: () {}),
           IconButton(icon: const Icon(Icons.manage_accounts_outlined, color: Colors.grey, size: 28), onPressed: () {}),
