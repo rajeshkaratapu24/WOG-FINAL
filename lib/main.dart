@@ -1,41 +1,25 @@
 import 'package:flutter/material.dart';
-import 'dart:async';
-import 'home_screen.dart'; // రెండూ 'ui' ఫోల్డర్ లోనే ఉన్నాయి కాబట్టి డైరెక్ట్ ఇంపోర్ట్
+// మీ రూల్ ప్రకారం UI ఫైల్స్ అన్నీ 'ui' ఫోల్డర్ లో ఉన్నాయి కాబట్టి పాత్ అప్‌డేట్ చేశాను.
+import 'ui/splash_screen.dart'; 
 
-class SplashScreen extends StatefulWidget {
-  const SplashScreen({super.key});
-
-  @override
-  State<SplashScreen> createState() => _SplashScreenState();
+void main() {
+  runApp(const WogApp());
 }
 
-class _SplashScreenState extends State<SplashScreen> {
-  @override
-  void initState() {
-    super.initState();
-    // 2 సెకన్ల తర్వాత Home Screen కి వెళ్తుంది
-    Timer(const Duration(seconds: 2), () {
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => const HomeScreen()),
-      );
-    });
-  }
+class WogApp extends StatelessWidget {
+  const WogApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      backgroundColor: Colors.blueAccent,
-      body: Center(
-        child: Text(
-          'WORLD OF GOD\n(WOG)',
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: 32, 
-            fontWeight: FontWeight.bold, 
-            color: Colors.white
-          ),
-        ),
+    return MaterialApp(
+      title: 'WORLD OF GOD', // మీ ప్రాజెక్ట్ పేరు
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+        useMaterial3: true,
       ),
+      // ఇక్కడ const వాడాలంటే, పైన ఇంపోర్ట్ కరెక్ట్ గా ఉండాలి.
+      home: const SplashScreen(), 
     );
   }
 }
